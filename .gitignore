@@ -46,3 +46,9 @@ coverage
 
 # Netlify
 .netlify
+CLEAR_CACHE.md
+DEPLOYMENT.md
+FIX_THEME.md
+plan.md
+.gitignore
+

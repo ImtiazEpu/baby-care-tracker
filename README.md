@@ -115,7 +115,6 @@ baby-care-tracker/
 ├── index.html
 ├── netlify.toml           # Netlify configuration
 ├── package.json
-├── plan.md                # Project requirements
 └── README.md
 ```
 
@@ -222,15 +221,8 @@ This project is open source and available for personal and educational use.
 
 For issues or questions, please open an issue on the GitHub repository.
 
-## Future Enhancements (Optional)
-
-- Export vaccination record as PDF
-- PWA support for offline installation
-- Notifications for upcoming vaccines
-- Multi-language support (Bengali)
-
 ---
 
-**Copyright © 2026 - Developed by [MatrixLab](https://matrixlab.com)**
+**Copyright © 2026 - Developed by [MatrixLab](https://matrixlab.it.com)**
 
 Built with ❤️ for parents in Bangladesh
