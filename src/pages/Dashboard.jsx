@@ -16,6 +16,7 @@ import ProgressBar from '../components/ProgressBar';
 import MilestoneTracker from '../components/MilestoneTracker';
 import GrowthTracker from '../components/GrowthTracker';
 import ThemeToggle from '../components/ThemeToggle';
+import PrivacyNotice from '../components/PrivacyNotice';
 import { CardLoader } from '../components/LoadingCard';
 import Footer from '../components/Footer';
 
@@ -26,23 +27,25 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen gradient-mesh">
-        <div className="max-w-5xl mx-auto p-4 pt-8">
+      <div className="min-h-screen gradient-mesh flex flex-col">
+        <div className="max-w-5xl mx-auto p-4 pt-8 flex-1">
           <CardLoader />
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!currentBaby) {
     return (
-      <div className="min-h-screen gradient-mesh">
-        <div className="max-w-5xl mx-auto p-4 pt-8">
+      <div className="min-h-screen gradient-mesh flex flex-col">
+        <div className="max-w-5xl mx-auto p-4 pt-8 flex-1">
           <Card className="text-center py-12">
             <h2 className="text-2xl font-semibold mb-4 dark:text-gray-100">No baby selected</h2>
             <Button onClick={() => navigate('/')} icon={ArrowLeftIcon}>Go to Home</Button>
           </Card>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -60,14 +63,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-mesh">
-      <div className="max-w-5xl mx-auto p-4 py-6">
+    <div className="min-h-screen gradient-mesh flex flex-col">
+      <div className="max-w-5xl mx-auto p-4 py-6 flex-1 w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Button variant="secondary" size="sm" icon={ArrowLeftIcon} onClick={() => navigate('/')}>
             Back to Home
           </Button>
           <div className="flex gap-2">
+            <PrivacyNotice />
             <ThemeToggle />
             <Button variant="outline" size="sm" icon={ShareIcon} onClick={handleShareClick}>
               Share

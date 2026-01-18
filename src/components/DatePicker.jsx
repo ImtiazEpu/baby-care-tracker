@@ -24,6 +24,7 @@ const DatePicker = ({
         maxDate: maxDate || new Date(),
         minDate: minDate,
         defaultDate: value || null,
+        disableMobile: true,
         onChange: (selectedDates, dateStr) => {
           if (onChange) {
             // Create synthetic event

@@ -13,26 +13,21 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme');
-    // Default to light mode if nothing saved
-    if (!saved) return false;
+    // Default to dark mode if nothing saved
+    if (!saved) return true;
     return saved === 'dark';
   });
 
   useEffect(() => {
     const root = document.documentElement;
 
-    // Force remove dark class first
-    root.classList.remove('dark');
-
     if (isDark) {
       root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
+      root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
-
-    // Debug log
-    console.log('Theme:', isDark ? 'dark' : 'light', 'Classes:', root.className);
   }, [isDark]);
 
   const toggleTheme = () => setIsDark(!isDark);

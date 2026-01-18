@@ -1,4 +1,24 @@
 /**
+ * Parse a date string (YYYY-MM-DD) as local timezone date at midnight
+ * This avoids UTC parsing issues that can shift dates by a day
+ * @param {string} dateStr - Date string in YYYY-MM-DD format
+ * @returns {Date} Date object set to local midnight
+ */
+const parseLocalDate = (dateStr) => {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day); // months are 0-indexed
+};
+
+/**
+ * Get today's date at local midnight (for consistent date comparisons)
+ * @returns {Date} Today's date at midnight local time
+ */
+const getTodayLocal = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+};
+
+/**
  * Calculate exact age of baby
  * @param {string} dob - Date of birth in YYYY-MM-DD format
  * @returns {Object} Age breakdown with years, months, days
@@ -6,8 +26,8 @@
 export const calculateAge = (dob) => {
   if (!dob) return null;
 
-  const birthDate = new Date(dob);
-  const today = new Date();
+  const birthDate = parseLocalDate(dob);
+  const today = getTodayLocal();
 
   if (isNaN(birthDate.getTime()) || birthDate > today) {
     return null;
@@ -68,7 +88,7 @@ const formatAge = (years, months, days) => {
 };
 
 /**
- * Calculate due date for a vaccine
+ * Calculate due date for a vaccine using proper date arithmetic
  * @param {string} dob - Date of birth
  * @param {number} daysAfterBirth - Days after birth when vaccine is due
  * @returns {string} Due date in readable format
@@ -76,8 +96,10 @@ const formatAge = (years, months, days) => {
 export const calculateVaccineDueDate = (dob, daysAfterBirth) => {
   if (!dob) return null;
 
-  const birthDate = new Date(dob);
-  const dueDate = new Date(birthDate.getTime() + daysAfterBirth * 24 * 60 * 60 * 1000);
+  const birthDate = parseLocalDate(dob);
+  // Use setDate for proper date arithmetic (handles month/year boundaries correctly)
+  const dueDate = new Date(birthDate);
+  dueDate.setDate(dueDate.getDate() + daysAfterBirth);
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${months[dueDate.getMonth()]} ${dueDate.getDate()}, ${dueDate.getFullYear()}`;
@@ -92,9 +114,13 @@ export const calculateVaccineDueDate = (dob, daysAfterBirth) => {
 export const getDaysUntilVaccine = (dob, daysAfterBirth) => {
   if (!dob) return null;
 
-  const birthDate = new Date(dob);
-  const dueDate = new Date(birthDate.getTime() + daysAfterBirth * 24 * 60 * 60 * 1000);
-  const today = new Date();
+  const birthDate = parseLocalDate(dob);
+  const dueDate = new Date(birthDate);
+  dueDate.setDate(dueDate.getDate() + daysAfterBirth);
 
-  return Math.floor((dueDate - today) / (1000 * 60 * 60 * 24));
+  const today = getTodayLocal();
+
+  // Calculate difference in days
+  const diffTime = dueDate.getTime() - today.getTime();
+  return Math.round(diffTime / (1000 * 60 * 60 * 24));
 };

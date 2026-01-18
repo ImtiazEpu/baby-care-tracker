@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
 import ThemeToggle from '../components/ThemeToggle';
+import PrivacyNotice from '../components/PrivacyNotice';
 import { ListLoader } from '../components/LoadingCard';
 import Footer from '../components/Footer';
 
@@ -33,19 +34,21 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen gradient-mesh">
-        <div className="max-w-4xl mx-auto p-4 pt-8">
+      <div className="min-h-screen gradient-mesh flex flex-col">
+        <div className="max-w-4xl mx-auto p-4 pt-8 flex-1">
           <ListLoader rows={3} />
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen gradient-mesh">
-      <div className="max-w-4xl mx-auto p-4 py-8">
-        {/* Header with Theme Toggle */}
-        <div className="flex justify-end mb-6">
+    <div className="min-h-screen gradient-mesh flex flex-col">
+      <div className="max-w-4xl mx-auto p-4 py-8 flex-1">
+        {/* Header with Theme Toggle and Privacy Notice */}
+        <div className="flex justify-end gap-2 mb-6">
+          <PrivacyNotice />
           <ThemeToggle />
         </div>
 

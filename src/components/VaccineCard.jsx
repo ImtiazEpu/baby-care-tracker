@@ -3,7 +3,7 @@ import { STATUS_COLORS, STATUS_ICONS } from '../config/vaccines';
 import Button from './Button';
 
 const VaccineCard = ({ vaccine, onToggle }) => {
-  const { label, dueDate, status, statusMessage, isCompleted } = vaccine;
+  const { label, dueDate, status, statusMessage, isCompleted, ageLabel, ageDays } = vaccine;
 
   return (
     <div className={`glass-card border-l-4 p-5 rounded-r-2xl transition-all hover:scale-[1.01] ${
@@ -11,9 +11,20 @@ const VaccineCard = ({ vaccine, onToggle }) => {
     }`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center gap-3 mb-2">
             <span className="text-3xl">{STATUS_ICONS[status]}</span>
             <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{label}</h3>
+          </div>
+
+          <div className="mb-3">
+            <span className="inline-flex items-center gap-2 text-xs">
+              <span className="px-2 py-1 rounded-md bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-medium">
+                {ageLabel}
+              </span>
+              <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                {ageDays}
+              </span>
+            </span>
           </div>
 
           <div className="space-y-2 mb-4">
