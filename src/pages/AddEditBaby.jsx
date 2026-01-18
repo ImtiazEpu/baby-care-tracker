@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeftIcon, UserPlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
 import Input from '../components/Input';
 import DatePicker from '../components/DatePicker';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import ThemeToggle from '../components/ThemeToggle';
-import PrivacyNotice from '../components/PrivacyNotice';
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const AddEditBaby = () => {
@@ -85,15 +84,7 @@ const AddEditBaby = () => {
     <div className="min-h-screen gradient-mesh flex flex-col">
       <div className="max-w-2xl mx-auto p-4 py-8 flex-1 w-full">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <Button variant="secondary" size="sm" icon={ArrowLeftIcon} onClick={() => navigate('/')}>
-            Back
-          </Button>
-          <div className="flex gap-2">
-            <PrivacyNotice />
-            <ThemeToggle />
-          </div>
-        </div>
+        <Header showBack backLabel="Back" />
 
         <Card>
           <div className="mb-8">

@@ -4,6 +4,7 @@ import { calculateAge } from '../utils/ageCalculator';
 import { getVaccineStatus, getVaccineProgress, getVaccinationStage } from '../utils/vaccineEngine';
 import Card from '../components/Card';
 import ProgressBar from '../components/ProgressBar';
+import Header from '../components/Header';
 import { STATUS_COLORS, STATUS_ICONS } from '../config/vaccines';
 import Footer from '../components/Footer';
 
@@ -11,14 +12,24 @@ const SharedView = () => {
   const [searchParams] = useSearchParams();
   const name = searchParams.get('name');
   const dob = searchParams.get('dob');
+  const vaccinesParam = searchParams.get('v');
 
   const [babyData, setBabyData] = useState(null);
 
   useEffect(() => {
     if (name && dob) {
-      setBabyData({ name, dob });
+      // Decode vaccines data if present
+      let vaccines = {};
+      if (vaccinesParam) {
+        try {
+          vaccines = JSON.parse(atob(vaccinesParam));
+        } catch (e) {
+          console.error('Failed to decode vaccines data:', e);
+        }
+      }
+      setBabyData({ name, dob, vaccines });
     }
-  }, [name, dob]);
+  }, [name, dob, vaccinesParam]);
 
   if (!babyData) {
     return (
@@ -37,7 +48,7 @@ const SharedView = () => {
   }
 
   const age = calculateAge(babyData.dob);
-  const vaccines = getVaccineStatus(babyData.dob, {});
+  const vaccines = getVaccineStatus(babyData.dob, babyData.vaccines || {});
   const progress = getVaccineProgress(vaccines);
   const stage = getVaccinationStage(vaccines);
 
@@ -45,6 +56,9 @@ const SharedView = () => {
     <div className="min-h-screen gradient-mesh flex flex-col">
       <div className="max-w-4xl mx-auto p-4 py-8 flex-1 w-full">
         {/* Header */}
+        <Header />
+
+        {/* Page Title */}
         <div className="text-center mb-6">
           <div className="inline-block glass-card text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-medium mb-4">
             Read-Only View
@@ -61,25 +75,25 @@ const SharedView = () => {
             <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-4xl font-bold mb-3">
               {babyData.name.charAt(0).toUpperCase()}
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{babyData.name}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{babyData.name}</h2>
             {age && (
-              <div className="text-gray-600">
-                <p className="text-lg font-semibold">{age.formatted}</p>
-                <p className="text-sm mt-1">
+              <div className="text-gray-600 dark:text-gray-300">
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{age.formatted}</p>
+                <p className="text-sm mt-1 text-gray-500 dark:text-gray-400">
                   {age.totalDays} days • {age.totalWeeks} weeks • {age.totalMonths} months
                 </p>
               </div>
             )}
           </div>
 
-          <div className="border-t border-gray-200 pt-4 mt-4">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
             <ProgressBar
               completed={progress.completed}
               total={progress.total}
               percentage={progress.percentage}
             />
             <div className="mt-3 text-center">
-              <span className="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+              <span className="text-sm text-gray-700 dark:text-gray-200 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
                 {stage}
               </span>
             </div>
@@ -88,7 +102,7 @@ const SharedView = () => {
 
         {/* Vaccines */}
         <Card>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             Vaccine Schedule
           </h2>
           <div className="space-y-3">
@@ -129,12 +143,12 @@ const SharedView = () => {
         </Card>
 
         {/* Disclaimer */}
-        <Card className="mt-6 bg-amber-50 border-amber-200">
+        <Card className="mt-6 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
           <div className="flex items-start gap-3">
             <span className="text-2xl">⚠️</span>
             <div>
-              <h4 className="font-semibold text-gray-900 mb-1">Medical Disclaimer</h4>
-              <p className="text-sm text-gray-700">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Medical Disclaimer</h4>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 This app follows the Bangladesh EPI schedule. Always consult with a qualified
                 healthcare professional for medical advice and vaccination guidance.
               </p>

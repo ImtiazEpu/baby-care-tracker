@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ArrowLeftIcon,
   ShareIcon,
   TrophyIcon,
   ChartBarIcon
@@ -15,8 +14,7 @@ import VaccineCard from '../components/VaccineCard';
 import ProgressBar from '../components/ProgressBar';
 import MilestoneTracker from '../components/MilestoneTracker';
 import GrowthTracker from '../components/GrowthTracker';
-import ThemeToggle from '../components/ThemeToggle';
-import PrivacyNotice from '../components/PrivacyNotice';
+import Header from '../components/Header';
 import { CardLoader } from '../components/LoadingCard';
 import Footer from '../components/Footer';
 
@@ -57,7 +55,9 @@ const Dashboard = () => {
   const overdueVaccines = getOverdueVaccines(vaccines);
 
   const handleShareClick = () => {
-    const shareUrl = `${window.location.origin}/share?name=${encodeURIComponent(currentBaby.name)}&dob=${currentBaby.dob}`;
+    // Encode vaccines data for sharing
+    const vaccinesData = currentBaby.vaccines ? btoa(JSON.stringify(currentBaby.vaccines)) : '';
+    const shareUrl = `${window.location.origin}/share?name=${encodeURIComponent(currentBaby.name)}&dob=${currentBaby.dob}&v=${vaccinesData}`;
     navigator.clipboard.writeText(shareUrl);
     alert('Share link copied to clipboard!');
   };
@@ -66,18 +66,15 @@ const Dashboard = () => {
     <div className="min-h-screen gradient-mesh flex flex-col">
       <div className="max-w-5xl mx-auto p-4 py-6 flex-1 w-full">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Button variant="secondary" size="sm" icon={ArrowLeftIcon} onClick={() => navigate('/')}>
-            Back to Home
-          </Button>
-          <div className="flex gap-2">
-            <PrivacyNotice />
-            <ThemeToggle />
+        <Header
+          showBack
+          backLabel="Home"
+          rightContent={
             <Button variant="outline" size="sm" icon={ShareIcon} onClick={handleShareClick}>
               Share
             </Button>
-          </div>
-        </div>
+          }
+        />
 
         {/* Baby Selector */}
         {babies.length > 1 && (

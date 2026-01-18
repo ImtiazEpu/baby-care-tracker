@@ -6,8 +6,7 @@ import { calculateAge } from '../utils/ageCalculator';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
-import ThemeToggle from '../components/ThemeToggle';
-import PrivacyNotice from '../components/PrivacyNotice';
+import Header from '../components/Header';
 import { ListLoader } from '../components/LoadingCard';
 import Footer from '../components/Footer';
 
@@ -46,11 +45,8 @@ const Home = () => {
   return (
     <div className="min-h-screen gradient-mesh flex flex-col">
       <div className="max-w-4xl mx-auto p-4 py-8 flex-1">
-        {/* Header with Theme Toggle and Privacy Notice */}
-        <div className="flex justify-end gap-2 mb-6">
-          <PrivacyNotice />
-          <ThemeToggle />
-        </div>
+        {/* Header */}
+        <Header />
 
         {/* Hero Section */}
         <div className="text-center mb-12">
