@@ -94,21 +94,21 @@ const Dashboard = () => {
         )}
 
         {/* Baby Info Card */}
-        <Card className="mb-6">
-          <div className="flex items-start gap-6 mb-6">
+        <Card className="mb-6 overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6">
             {currentBaby.photo ? (
               <img
                 src={currentBaby.photo}
                 alt={currentBaby.name}
-                className="w-24 h-24 rounded-full object-cover ring-4 ring-white/50 dark:ring-gray-700/50"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4 ring-white/50 dark:ring-gray-700/50 shrink-0"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-4xl font-bold ring-4 ring-white/50 dark:ring-gray-700/50">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-3xl sm:text-4xl font-bold ring-4 ring-white/50 dark:ring-gray-700/50 shrink-0">
                 {currentBaby.name.charAt(0).toUpperCase()}
               </div>
             )}
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <div className="flex-1 min-w-0 text-center sm:text-left">
+              <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 truncate">
                 {currentBaby.name}
               </h1>
               {currentBaby.gender && (
@@ -117,12 +117,12 @@ const Dashboard = () => {
                 </p>
               )}
               {age && (
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="glass px-4 py-2 rounded-lg">
+                <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-4 text-sm">
+                  <div className="glass px-3 sm:px-4 py-2 rounded-lg">
                     <span className="text-gray-600 dark:text-gray-400">Age: </span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{age.formatted}</span>
                   </div>
-                  <div className="glass px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400">
+                  <div className="glass px-3 sm:px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400">
                     {age.totalDays} days • {age.totalWeeks} weeks • {age.totalMonths} months
                   </div>
                 </div>
@@ -152,7 +152,7 @@ const Dashboard = () => {
 
         {/* Tabs */}
         <div className="mb-6">
-          <div className="glass-card p-1 rounded-xl inline-flex gap-1">
+          <div className="glass-card p-1 rounded-xl flex w-full sm:w-auto sm:inline-flex gap-1">
             {[
               { id: 'vaccines', label: 'Vaccines', icon: null, emoji: '💉' },
               { id: 'milestones', label: 'Milestones', icon: TrophyIcon },
@@ -161,7 +161,7 @@ const Dashboard = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 font-medium rounded-lg transition-all flex items-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-none px-3 sm:px-6 py-3 font-medium rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === tab.id
                     ? 'glass-card text-indigo-600 dark:text-indigo-400 shadow-lg'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
@@ -172,7 +172,7 @@ const Dashboard = () => {
                 ) : (
                   <tab.icon className="w-5 h-5" />
                 )}
-                {tab.label}
+                <span className="text-sm sm:text-base">{tab.label}</span>
               </button>
             ))}
           </div>

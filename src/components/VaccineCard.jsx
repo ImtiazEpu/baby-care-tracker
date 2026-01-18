@@ -6,18 +6,18 @@ const VaccineCard = ({ vaccine, onToggle }) => {
   const { label, dueDate, status, statusMessage, isCompleted, ageLabel, ageDays } = vaccine;
 
   return (
-    <div className={`glass-card border-l-4 p-5 rounded-r-2xl transition-all hover:scale-[1.01] ${
+    <div className={`glass-card border-l-4 p-4 sm:p-5 rounded-r-2xl transition-all hover:scale-[1.01] ${
       isCompleted ? 'border-green-500' : 'border-indigo-500'
     }`}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-3xl">{STATUS_ICONS[status]}</span>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{label}</h3>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2">
+            <span className="text-2xl sm:text-3xl">{STATUS_ICONS[status]}</span>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-base sm:text-lg">{label}</h3>
           </div>
 
           <div className="mb-3">
-            <span className="inline-flex items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-2 text-xs flex-wrap">
               <span className="px-2 py-1 rounded-md bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-medium">
                 {ageLabel}
               </span>
@@ -27,7 +27,7 @@ const VaccineCard = ({ vaccine, onToggle }) => {
             </span>
           </div>
 
-          <div className="space-y-2 mb-4">
+          <div className="space-y-2">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               <span className="font-medium">Due Date:</span> {dueDate}
             </p>
@@ -37,7 +37,7 @@ const VaccineCard = ({ vaccine, onToggle }) => {
           </div>
         </div>
 
-        <div>
+        <div className="shrink-0">
           {isCompleted ? (
             <Button
               size="sm"
