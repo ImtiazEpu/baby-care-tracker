@@ -67,7 +67,7 @@ const DatePicker = ({
         type="text"
         placeholder={placeholder}
         required={required}
-        className={`glass-card w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 cursor-pointer ${
+        className={`glass-card border border-white/10 w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 cursor-pointer ${
           error ? 'ring-2 ring-red-500' : ''
         }`}
         readOnly

@@ -49,7 +49,7 @@ const Header = ({ showBack = false, backPath = '/', backLabel = 'Back', backIcon
         {showBack && (
           <button
             onClick={() => navigate(backPath)}
-            className="glass-card px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:scale-105 transition-transform text-gray-600 dark:text-gray-300 text-sm font-medium"
+            className="glass-card border border-white/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:scale-105 transition-transform text-gray-600 dark:text-gray-300 text-sm font-medium"
           >
             {backIcon ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">

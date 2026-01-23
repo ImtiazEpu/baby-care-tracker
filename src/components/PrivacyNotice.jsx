@@ -8,7 +8,7 @@ const PrivacyNotice = () => {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="glass-card p-2 rounded-lg hover:scale-105 transition-transform duration-200"
+        className="glass-card border border-white/10 p-2 rounded-lg hover:scale-105 transition-transform duration-200"
         aria-label="Data privacy information"
         title="Data Privacy"
       >
@@ -21,7 +21,7 @@ const PrivacyNotice = () => {
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
           />
-          <div className="relative glass-card rounded-2xl p-6 max-w-md w-full shadow-2xl">
+          <div className="relative glass-card border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl">
             <button
               onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"

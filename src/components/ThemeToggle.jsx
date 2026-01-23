@@ -7,7 +7,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="glass-card p-2 rounded-lg hover:scale-105 transition-transform duration-200"
+      className="glass-card border border-white/10 p-2 rounded-lg hover:scale-105 transition-transform duration-200"
       aria-label="Toggle theme"
     >
       {isDark ? (

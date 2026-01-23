@@ -34,14 +34,14 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
         />
 
         {/* Modal */}
-        <div className={`relative glass-card rounded-2xl shadow-2xl w-full ${sizes[size]} my-8`}>
+        <div className={`relative glass-card border border-white/10 rounded-2xl shadow-2xl w-full ${sizes[size]} my-8`}>
           {/* Header */}
           {title && (
             <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
               <button
                 onClick={onClose}
-                className="glass-card p-2 rounded-lg hover:scale-110 transition-transform text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
+                className="glass-card border border-white/10 p-2 rounded-lg hover:scale-110 transition-transform text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
               >
                 <XMarkIcon className="w-6 h-6" />
               </button>

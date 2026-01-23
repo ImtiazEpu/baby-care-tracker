@@ -65,7 +65,7 @@ const SharedView = () => {
 
         {/* Page Title */}
         <div className="text-center mb-6">
-          <div className="inline-block glass-card text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-medium mb-4">
+          <div className="inline-block glass-card border border-white/10 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-medium mb-4">
             Read-Only View
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">

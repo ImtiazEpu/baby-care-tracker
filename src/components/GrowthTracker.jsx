@@ -66,7 +66,7 @@ const GrowthTracker = () => {
       ) : (
         <>
           {/* Chart */}
-          <div className="glass-card p-4 rounded-xl mb-6 h-64">
+          <div className="glass-card border border-white/10 p-4 rounded-xl mb-6 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -92,7 +92,7 @@ const GrowthTracker = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="glass-card">
+                <tr className="glass-card border border-white/10">
                   <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Date</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Weight (kg)</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Height (cm)</th>
@@ -104,7 +104,7 @@ const GrowthTracker = () => {
                 {growthRecords.map((record, index) => (
                   <tr
                     key={record.id}
-                    className={`${index % 2 === 0 ? 'glass' : ''} hover:glass-card transition-all`}
+                    className={`${index % 2 === 0 ? 'glass border border-white/10' : ''} hover:glass-card transition-all`}
                   >
                     <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
                       {new Date(record.date).toLocaleDateString()}
@@ -115,7 +115,7 @@ const GrowthTracker = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => deleteGrowthRecord(record.id)}
-                        className="glass-card p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon"
+                        className="glass-card border border-white/10 p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon"
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>

@@ -3,7 +3,7 @@ const Card = ({ children, className = '', padding = true, hover = false }) => {
   const hoverStyles = hover ? 'hover:scale-[1.02] cursor-pointer' : '';
 
   return (
-    <div className={`glass-card rounded-2xl transition-all duration-300 overflow-hidden ${paddingStyles} ${hoverStyles} ${className}`}>
+    <div className={`glass-card border border-white/10 rounded-2xl transition-all duration-300 overflow-hidden ${paddingStyles} ${hoverStyles} ${className}`}>
       {children}
     </div>
   );

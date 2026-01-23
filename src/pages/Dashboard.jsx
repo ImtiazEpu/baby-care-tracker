@@ -128,7 +128,7 @@ const Dashboard = () => {
             <select
               value={currentBaby.id}
               onChange={(e) => switchBaby(e.target.value)}
-              className="glass-card w-full md:w-auto px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 font-medium cursor-pointer"
+              className="glass-card border border-white/10 w-full md:w-auto px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-gray-100 font-medium cursor-pointer"
             >
               {babies.map(baby => (
                 <option key={baby.id} value={baby.id}>
@@ -181,11 +181,11 @@ const Dashboard = () => {
               </div>
               {age && (
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-4 text-sm">
-                  <div className="glass px-3 sm:px-4 py-2 rounded-lg">
+                  <div className="glass border border-white/10 px-3 sm:px-4 py-2 rounded-lg">
                     <span className="text-gray-600 dark:text-gray-400">Age: </span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{age.formatted}</span>
                   </div>
-                  <div className="glass px-3 sm:px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400">
+                  <div className="glass border border-white/10 px-3 sm:px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400">
                     {age.totalDays} days • {age.totalWeeks} weeks • {age.totalMonths} months
                   </div>
                 </div>
@@ -201,11 +201,11 @@ const Dashboard = () => {
               percentage={progress.percentage}
             />
             <div className="mt-4 flex items-center justify-between flex-wrap gap-3">
-              <span className="text-sm text-gray-700 dark:text-gray-300 glass px-4 py-2 rounded-full font-medium">
+              <span className="text-sm text-gray-700 dark:text-gray-300 glass border border-white/10 px-4 py-2 rounded-full font-medium">
                 {stage}
               </span>
               {overdueVaccines.length > 0 && (
-                <span className="text-sm text-red-600 dark:text-red-400 glass px-4 py-2 rounded-full font-medium border border-red-200 dark:border-red-800">
+                <span className="text-sm text-red-600 dark:text-red-400 glass border border-white/10 px-4 py-2 rounded-full font-medium">
                   ⚠️ {overdueVaccines.length} vaccine{overdueVaccines.length > 1 ? 's' : ''} overdue
                 </span>
               )}
@@ -218,7 +218,7 @@ const Dashboard = () => {
           ref={tabsContainerRef}
           className="mb-6 -mx-4 px-4 overflow-x-auto scrollbar-hide"
         >
-          <div className="glass-card p-1 rounded-xl inline-flex gap-1 min-w-max">
+          <div className="glass-card border border-white/10 p-1 rounded-xl inline-flex gap-1 min-w-max">
             {TABS.map(tab => (
               <button
                 key={tab.id}
@@ -226,7 +226,7 @@ const Dashboard = () => {
                 onClick={() => handleTabClick(tab.id)}
                 className={`px-4 sm:px-6 py-2.5 sm:py-3 font-medium rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'glass-card text-indigo-600 dark:text-indigo-400 shadow-lg'
+                    ? 'glass-card border border-white/10 text-indigo-600 dark:text-indigo-400 shadow-lg'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
@@ -294,7 +294,7 @@ const Dashboard = () => {
             ) : (
               <div className="space-y-3">
                 {currentBaby.medicalRecords.map(record => (
-                  <div key={record.id} className="glass flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl gap-3">
+                  <div key={record.id} className="glass border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`p-2 rounded-lg ${
                         record.type === 'application/pdf'

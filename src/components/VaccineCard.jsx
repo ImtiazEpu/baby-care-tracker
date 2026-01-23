@@ -6,8 +6,8 @@ const VaccineCard = ({ vaccine, onToggle }) => {
   const { label, dueDate, status, statusMessage, isCompleted, ageLabel, ageDays } = vaccine;
 
   return (
-    <div className={`glass-card border-l-4 p-4 sm:p-5 rounded-r-2xl transition-all hover:scale-[1.01] ${
-      isCompleted ? 'border-green-500' : 'border-indigo-500'
+    <div className={`glass-card border border-white/10 border-l-4 p-4 sm:p-5 rounded-r-2xl transition-all hover:scale-[1.01] ${
+      isCompleted ? 'border-l-green-500' : 'border-l-indigo-500'
     }`}>
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div className="flex-1 min-w-0">

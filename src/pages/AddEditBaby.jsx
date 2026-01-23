@@ -207,7 +207,7 @@ const AddEditBaby = () => {
                 Gender (Optional)
               </label>
               <div className="grid grid-cols-2 gap-4">
-                <label className="glass-card px-6 py-3 rounded-xl cursor-pointer hover:scale-105 transition-transform text-center">
+                <label className="glass-card border border-white/10 px-6 py-3 rounded-xl cursor-pointer hover:scale-105 transition-transform text-center">
                   <input
                     type="radio"
                     name="gender"
@@ -218,7 +218,7 @@ const AddEditBaby = () => {
                   />
                   <span className="text-gray-900 dark:text-gray-100 font-medium">👦 Boy</span>
                 </label>
-                <label className="glass-card px-6 py-3 rounded-xl cursor-pointer hover:scale-105 transition-transform text-center">
+                <label className="glass-card border border-white/10 px-6 py-3 rounded-xl cursor-pointer hover:scale-105 transition-transform text-center">
                   <input
                     type="radio"
                     name="gender"
@@ -240,7 +240,7 @@ const AddEditBaby = () => {
                 {BLOOD_GROUPS.map(group => (
                   <label
                     key={group}
-                    className={`glass-card px-3 sm:px-4 py-2 sm:py-3 rounded-xl cursor-pointer hover:scale-105 transition-transform text-center ${
+                    className={`glass-card border border-white/10 px-3 sm:px-4 py-2 sm:py-3 rounded-xl cursor-pointer hover:scale-105 transition-transform text-center ${
                       formData.bloodGroup === group ? 'ring-2 ring-indigo-500 bg-indigo-50 dark:bg-indigo-900/30' : ''
                     }`}
                   >
@@ -308,7 +308,7 @@ const AddEditBaby = () => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="glass-card w-full p-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer flex flex-col items-center gap-2"
+                className="glass-card border border-white/10 w-full p-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer flex flex-col items-center gap-2"
               >
                 <DocumentArrowUpIcon className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                 <span className="text-sm text-gray-600 dark:text-gray-400">Click to upload files</span>
@@ -323,7 +323,7 @@ const AddEditBaby = () => {
                 <div className="mt-4 space-y-2">
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Files to upload:</p>
                   {pendingFiles.map(file => (
-                    <div key={file.id} className="glass flex items-center justify-between p-3 rounded-lg">
+                    <div key={file.id} className="glass border border-white/10 flex items-center justify-between p-3 rounded-lg">
                       <div className="flex items-center gap-3 min-w-0">
                         <DocumentIcon className="w-5 h-5 text-indigo-500 shrink-0" />
                         <div className="min-w-0">
@@ -348,7 +348,7 @@ const AddEditBaby = () => {
                 <div className="mt-4 space-y-2">
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Uploaded records:</p>
                   {existingBaby.medicalRecords.map(record => (
-                    <div key={record.id} className="glass flex items-center justify-between p-3 rounded-lg">
+                    <div key={record.id} className="glass border border-white/10 flex items-center justify-between p-3 rounded-lg">
                       <div className="flex items-center gap-3 min-w-0">
                         <DocumentIcon className="w-5 h-5 text-green-500 shrink-0" />
                         <div className="min-w-0">

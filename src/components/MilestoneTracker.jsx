@@ -72,7 +72,7 @@ const MilestoneTracker = () => {
             return (
               <div
                 key={milestone.days}
-                className={`glass-card p-4 rounded-xl text-center transition-all ${
+                className={`glass-card border border-white/10 p-4 rounded-xl text-center transition-all ${
                   achieved
                     ? 'border-2 border-green-400 dark:border-green-600'
                     : 'opacity-50'
@@ -99,7 +99,7 @@ const MilestoneTracker = () => {
             {customMilestones.map((milestone) => (
               <div
                 key={milestone.id}
-                className="glass-card p-4 rounded-xl border border-indigo-200 dark:border-indigo-800 flex items-start justify-between hover:scale-[1.01] transition-transform"
+                className="glass-card border border-white/10 p-4 rounded-xl flex items-start justify-between hover:scale-[1.01] transition-transform"
               >
                 <div className="flex-1">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100">{milestone.title}</h4>
@@ -112,7 +112,7 @@ const MilestoneTracker = () => {
                 </div>
                 <button
                   onClick={() => deleteMilestone(milestone.id)}
-                  className="glass-card p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon"
+                  className="glass-card border border-white/10 p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon"
                 >
                   <TrashIcon className="w-5 h-5" />
                 </button>

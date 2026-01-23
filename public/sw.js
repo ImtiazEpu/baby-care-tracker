@@ -44,6 +44,18 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // Skip non-http(s) requests (e.g., chrome-extension://)
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Skip WebSocket and HMR requests in development
+  if (url.pathname.includes('__vite') || url.pathname.includes('@vite') || url.pathname.includes('node_modules')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {

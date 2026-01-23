@@ -82,7 +82,7 @@ const FeedbackButton = () => {
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={handleClose}
           />
-          <div className="relative glass-card rounded-2xl p-6 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative glass-card border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={handleClose}
               className="absolute top-4 right-4 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -197,7 +197,7 @@ const FeedbackButton = () => {
                       onChange={handleChange}
                       placeholder="Your name"
                       required
-                      className="glass-card w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400"
+                      className="glass-card border border-white/10 w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400"
                     />
                   </div>
 
@@ -213,7 +213,7 @@ const FeedbackButton = () => {
                       onChange={handleChange}
                       placeholder="your@email.com"
                       required
-                      className="glass-card w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400"
+                      className="glass-card border border-white/10 w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400"
                     />
                   </div>
 
