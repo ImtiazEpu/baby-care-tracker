@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { PlusIcon, TrashIcon, ChartBarIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Button from './Button';
 import Card from './Card';
 import Input from './Input';
 import DatePicker from './DatePicker';
 import Modal from './Modal';
+import GrowthChart from './GrowthChart';
 
 const GrowthTracker = () => {
   const { currentBaby, addGrowthRecord, deleteGrowthRecord } = useBaby();
@@ -59,7 +59,7 @@ const GrowthTracker = () => {
   };
 
   const chartData = growthRecords.map(record => ({
-    date: new Date(record.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    date: record.date,
     weight: record.weight,
     height: record.height,
     head: record.headCircumference
@@ -82,26 +82,8 @@ const GrowthTracker = () => {
       ) : (
         <>
           {/* Chart */}
-          <div className="glass-card border border-white/10 p-4 rounded-xl mb-6 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="date" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    borderRadius: '12px'
-                  }}
-                />
-                <Legend />
-                <Line type="monotone" dataKey="weight" stroke="#3b82f6" name="Weight (kg)" strokeWidth={2} />
-                <Line type="monotone" dataKey="height" stroke="#10b981" name="Height (cm)" strokeWidth={2} />
-                <Line type="monotone" dataKey="head" stroke="#f59e0b" name="Head (cm)" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+          <div className="glass-card border border-white/10 p-4 rounded-xl mb-6">
+            <GrowthChart data={chartData} />
           </div>
 
           {/* Records Table */}
