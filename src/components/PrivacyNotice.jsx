@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { InformationCircleIcon, XMarkIcon, TrashIcon, ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
 import { useAuth } from '../context/AuthContext';
+import { getErrorMessage } from '../utils/errorMessages';
 import Button from './Button';
 
 const PrivacyNotice = () => {
@@ -21,7 +22,7 @@ const PrivacyNotice = () => {
       setShowDeleteConfirm(false);
       setIsOpen(false);
     } catch (err) {
-      setDeleteError(err.message || 'Failed to delete data. Please try again.');
+      setDeleteError(getErrorMessage(err));
     } finally {
       setIsDeleting(false);
     }
@@ -71,7 +72,7 @@ const PrivacyNotice = () => {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <span className="text-green-500 mt-0.5">&#10003;</span>
-                      <span>Data is stored securely in the cloud (Firebase) linked to your account</span>
+                      <span>Data is stored securely in the cloud linked to your account</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-500 mt-0.5">&#10003;</span>

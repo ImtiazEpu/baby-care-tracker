@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserPlusIcon, PencilSquareIcon, DocumentArrowUpIcon, TrashIcon, DocumentIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
+import { getErrorMessage } from '../utils/errorMessages';
 import Input from '../components/Input';
 import DatePicker from '../components/DatePicker';
 import Button from '../components/Button';
@@ -190,7 +191,7 @@ const AddEditBaby = () => {
       navigate('/');
     } catch (err) {
       console.error('Error saving baby:', err);
-      setErrors({ submit: err.message || 'Failed to save. Please try again.' });
+      setErrors({ submit: getErrorMessage(err) });
     } finally {
       setIsSaving(false);
     }

@@ -9,6 +9,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { getErrorMessage } from '../utils/errorMessages';
 
 const AuthContext = createContext();
 
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }) => {
             window.history.replaceState(null, '', window.location.pathname);
           })
           .catch((err) => {
-            setError(err.message);
+            setError(getErrorMessage(err));
           });
       }
     }
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }) => {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }) => {
       window.localStorage.setItem('emailForSignIn', email);
       return true;
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -86,7 +87,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await firebaseSignOut(auth);
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
       throw err;
     }
   };

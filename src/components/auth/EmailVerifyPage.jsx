@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
 import { auth } from '../../config/firebase';
+import { getErrorMessage } from '../../utils/errorMessages';
 
 const EmailVerifyPage = () => {
   const [status, setStatus] = useState('verifying');
@@ -35,7 +36,7 @@ const EmailVerifyPage = () => {
         setTimeout(() => navigate('/'), 1500);
       } catch (err) {
         setStatus('error');
-        setError(err.message || 'Failed to verify email link.');
+        setError(getErrorMessage(err));
       }
     };
 
