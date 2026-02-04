@@ -1,6 +1,11 @@
 # Baby Care & Vaccine Tracker (Bangladesh EPI Edition)
 
-A production-ready web application for tracking baby's age, vaccines, milestones, and growth based on the Bangladesh Government EPI (Expanded Programme on Immunization) schedule.
+A production-ready Progressive Web App (PWA) for tracking baby's age, vaccines, milestones, and growth based on the Bangladesh Government EPI (Expanded Programme on Immunization) schedule.
+
+![Version](https://img.shields.io/badge/version-1.4.0-blue)
+![React](https://img.shields.io/badge/React-19-61dafb)
+![Vite](https://img.shields.io/badge/Vite-7-646cff)
+![Tailwind](https://img.shields.io/badge/Tailwind-4-38bdf8)
 
 ## Features
 
@@ -10,15 +15,19 @@ A production-ready web application for tracking baby's age, vaccines, milestones
 - **Smart Vaccine Status**: Classifies vaccines as Completed, Due, Upcoming, or Overdue
 - **Multiple Baby Profiles**: Support for tracking multiple babies
 - **Milestone Tracker**: Auto milestones (1 week, 45 days, 3 months, etc.) + custom milestones
-- **Growth Tracker**: Track weight, height, and head circumference with visual charts
-- **Medical Records**: Upload and store medical documents (PDF, images) locally
+- **Growth Tracker**: Track weight, height, and head circumference with interactive SVG charts
+- **Medical Records**: Upload and store medical documents (PDF, images) - 5MB total, 500KB per file
 - **Progress Tracking**: Visual progress bar showing vaccination completion
 - **Shareable Links**: Generate read-only links to share baby's vaccine schedule
 - **Dark Mode**: Elegant dark/light mode toggle with glassmorphism design
 - **PWA Support**: Install as app on mobile/desktop with offline support
 - **Auto Updates**: Get notified when a new version is available
-- **Offline Support**: All data stored locally in browser (localStorage)
-- **Privacy First**: No login required, no server, no data collection
+
+### Cloud Features (v1.4.0+)
+- **Cloud Authentication**: Sign in with Google or passwordless email magic link
+- **Cloud Storage**: All data syncs securely across your devices via Firestore
+- **Privacy Controls**: View privacy notice and delete all your data anytime
+- **User-Friendly Errors**: Clean error messages without technical jargon
 
 ### Bangladesh EPI Vaccine Schedule
 
@@ -33,16 +42,16 @@ A production-ready web application for tracking baby's age, vaccines, milestones
 
 ## Tech Stack
 
-- **Frontend**: React 19
-- **Build Tool**: Vite 7
-- **Styling**: Tailwind CSS 4 (with glassmorphism effects)
-- **Routing**: React Router DOM
-- **Charts**: Recharts
-- **Icons**: Heroicons
-- **Date Picker**: Flatpickr
-- **Date Handling**: Native JavaScript Date API
-- **Loading States**: React Content Loader
-- **Storage**: LocalStorage (browser-based)
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| React | 19 | UI Framework |
+| Vite | 7 | Build Tool |
+| Tailwind CSS | 4 | Styling (glassmorphism effects) |
+| Firebase | 12 | Authentication & Firestore Database |
+| React Router DOM | 7 | Routing |
+| Heroicons | 2 | Icons |
+| Flatpickr | 4 | Date Picker |
+| React Content Loader | 7 | Loading States |
 
 ## Getting Started
 
@@ -64,12 +73,24 @@ cd baby-care-tracker
 npm install
 ```
 
-3. Start the development server:
+3. Set up Firebase:
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
+   - Enable Authentication (Google and Email Link providers)
+   - Create a Firestore database
+   - Add your Firebase config to `src/config/firebase.js`
+   - Add your domain to Firebase Console > Authentication > Settings > Authorized domains
+
+4. Deploy Firestore security rules:
+```bash
+firebase deploy --only firestore:rules
+```
+
+5. Start the development server:
 ```bash
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+6. Open your browser and navigate to `http://localhost:5173`
 
 ### Available Scripts
 
@@ -88,6 +109,10 @@ baby-care-tracker/
 │   └── manifest.json       # PWA manifest
 ├── src/
 │   ├── components/         # Reusable UI components
+│   │   ├── auth/           # Authentication components
+│   │   │   ├── AuthPage.jsx
+│   │   │   ├── EmailOtpForm.jsx
+│   │   │   └── EmailVerifyPage.jsx
 │   │   ├── Button.jsx
 │   │   ├── Card.jsx
 │   │   ├── Input.jsx
@@ -98,14 +123,20 @@ baby-care-tracker/
 │   │   ├── ProgressBar.jsx
 │   │   ├── MilestoneTracker.jsx
 │   │   ├── GrowthTracker.jsx
+│   │   ├── GrowthChart.jsx     # Custom SVG chart
 │   │   ├── ThemeToggle.jsx
+│   │   ├── PrivacyNotice.jsx   # Privacy & data deletion
 │   │   ├── UpdateNotification.jsx
 │   │   └── Footer.jsx
 │   ├── config/            # Configuration files
+│   │   ├── firebase.js    # Firebase configuration
 │   │   └── vaccines.js    # BD EPI vaccine schedule
 │   ├── context/           # React Context
-│   │   ├── BabyContext.jsx
-│   │   └── ThemeContext.jsx
+│   │   ├── AuthContext.jsx    # Authentication state
+│   │   ├── BabyContext.jsx    # Baby data state
+│   │   └── ThemeContext.jsx   # Theme state
+│   ├── services/          # Firebase services
+│   │   └── babyService.js     # Firestore CRUD operations
 │   ├── pages/             # Page components
 │   │   ├── Home.jsx
 │   │   ├── AddEditBaby.jsx
@@ -113,6 +144,7 @@ baby-care-tracker/
 │   │   └── SharedView.jsx
 │   ├── utils/             # Utility functions
 │   │   ├── ageCalculator.js
+│   │   ├── errorMessages.js   # User-friendly error mapping
 │   │   ├── storage.js
 │   │   ├── validation.js
 │   │   └── vaccineEngine.js
@@ -120,6 +152,9 @@ baby-care-tracker/
 │   ├── main.jsx
 │   ├── index.css
 │   └── serviceWorkerRegistration.js
+├── firestore.rules        # Firestore security rules
+├── firestore.indexes.json # Firestore indexes
+├── firebase.json          # Firebase configuration
 ├── index.html
 ├── netlify.toml           # Netlify configuration
 ├── package.json
@@ -168,7 +203,16 @@ netlify deploy --prod
 
 ### Environment Variables
 
-No environment variables are required for this application. All data is stored locally in the browser.
+Firebase configuration is stored in `src/config/firebase.js`. For production, you may want to use environment variables:
+
+```env
+VITE_FIREBASE_API_KEY=your-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+VITE_FIREBASE_APP_ID=your-app-id
+```
 
 ## Usage
 
@@ -214,6 +258,14 @@ No environment variables are required for this application. All data is stored l
 
 This app follows the Bangladesh EPI schedule. Always consult with a qualified healthcare professional for medical advice and vaccination guidance.
 
+## Data Privacy
+
+- All data is stored securely in the cloud linked to your account
+- Only you can access your data through your authenticated account
+- Data syncs across all your devices when signed in
+- You can delete all your data at any time from the app (Privacy Notice > Delete All My Data)
+- We do not share, sell, or use your data for advertising
+
 ## Browser Compatibility
 
 - Chrome (latest)
@@ -222,6 +274,18 @@ This app follows the Bangladesh EPI schedule. Always consult with a qualified he
 - Edge (latest)
 
 ## Changelog
+
+### v1.4.0
+- Added cloud authentication (Google Sign-In & Email Magic Link)
+- Added cloud data storage with Firebase Firestore
+- Added medical records subcollection architecture (5MB total, 500KB per file)
+- Added custom interactive SVG growth chart (reduced bundle size)
+- Added loading indicators for vaccines, milestones, and growth actions
+- Added privacy notice with "Delete All My Data" option
+- Added user-friendly error messages (hides technical details)
+- Improved email sign-in UX with resend countdown timer
+- Improved form handling with disable while saving
+- Removed recharts dependency for lighter bundle
 
 ### v1.3.0
 - Added PWA update notification - users get notified when a new version is available
