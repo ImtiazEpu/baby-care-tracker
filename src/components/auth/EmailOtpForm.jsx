@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { EnvelopeIcon, ArrowPathIcon, CheckCircleIcon, InboxIcon } from '@heroicons/react/24/outline';
+import { getErrorMessage } from '../../utils/errorMessages';
 
 const EmailOtpForm = ({ onSendLink, disabled }) => {
   const [email, setEmail] = useState('');
@@ -31,11 +32,7 @@ const EmailOtpForm = ({ onSendLink, disabled }) => {
       setSent(true);
       setResendCountdown(60); // 60 seconds before resend
     } catch (err) {
-      if (err.code === 'auth/email-already-in-use') {
-        setError('This email is linked to Google sign-in. Please use "Continue with Google" instead.');
-      } else {
-        setError(err.message || 'Failed to send sign-in link');
-      }
+      setError(getErrorMessage(err));
     } finally {
       setSending(false);
     }
@@ -50,7 +47,7 @@ const EmailOtpForm = ({ onSendLink, disabled }) => {
       await onSendLink(email);
       setResendCountdown(60);
     } catch (err) {
-      setError(err.message || 'Failed to resend link');
+      setError(getErrorMessage(err));
     } finally {
       setSending(false);
     }
@@ -98,7 +95,7 @@ const EmailOtpForm = ({ onSendLink, disabled }) => {
         <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800">
           <p className="text-sm text-amber-800 dark:text-amber-200">
             <strong>Can't find the email?</strong> Check your spam or junk folder.
-            The email comes from <span className="font-mono text-xs">noreply@mybabycare-app.firebaseapp.com</span>
+            The email is sent from <span className="font-medium">noreply@mybabycare.app</span>
           </p>
         </div>
 

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
+import { getErrorMessage } from '../utils/errorMessages';
 import {
   getAllBabies,
   addBaby as addBabyToFirestore,
@@ -52,7 +53,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error loading babies:', err);
-      setError(err.message || 'Failed to load babies');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -75,7 +76,7 @@ export const BabyProvider = ({ children }) => {
       return newBaby;
     } catch (err) {
       console.error('Error adding baby:', err);
-      setError(err.message || 'Failed to add baby');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -90,7 +91,7 @@ export const BabyProvider = ({ children }) => {
       return updated;
     } catch (err) {
       console.error('Error updating baby:', err);
-      setError(err.message || 'Failed to update baby');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -107,7 +108,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error deleting baby:', err);
-      setError(err.message || 'Failed to delete baby');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -127,7 +128,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error toggling vaccine:', err);
-      setError(err.message || 'Failed to update vaccine status');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -143,7 +144,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error adding milestone:', err);
-      setError(err.message || 'Failed to add milestone');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -159,7 +160,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error deleting milestone:', err);
-      setError(err.message || 'Failed to delete milestone');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -175,7 +176,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error adding growth record:', err);
-      setError(err.message || 'Failed to add growth record');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -191,7 +192,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error deleting growth record:', err);
-      setError(err.message || 'Failed to delete growth record');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -207,7 +208,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error adding medical record:', err);
-      setError(err.message || 'Failed to add medical record');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -223,7 +224,7 @@ export const BabyProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Error deleting medical record:', err);
-      setError(err.message || 'Failed to delete medical record');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
@@ -243,7 +244,7 @@ export const BabyProvider = ({ children }) => {
       setCurrentBabyId(null);
     } catch (err) {
       console.error('Error deleting all user data:', err);
-      setError(err.message || 'Failed to delete all data');
+      setError(getErrorMessage(err));
       throw err;
     }
   };
