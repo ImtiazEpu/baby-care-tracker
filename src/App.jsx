@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { BabyProvider } from './context/BabyContext';
+import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import ProtectedLayout from './components/auth/ProtectedLayout';
+import AuthPage from './components/auth/AuthPage';
+import EmailVerifyPage from './components/auth/EmailVerifyPage';
 import Home from './pages/Home';
 import AddEditBaby from './pages/AddEditBaby';
 import Dashboard from './pages/Dashboard';
@@ -11,19 +14,26 @@ import UpdateNotification from './components/UpdateNotification';
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <BabyProvider>
+      <AuthProvider>
+        <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/add-baby" element={<AddEditBaby />} />
-            <Route path="/edit-baby/:id" element={<AddEditBaby />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            {/* Public routes */}
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth/verify" element={<EmailVerifyPage />} />
             <Route path="/share" element={<SharedView />} />
+
+            {/* Protected routes - share one BabyProvider */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/add-baby" element={<AddEditBaby />} />
+              <Route path="/edit-baby/:id" element={<AddEditBaby />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
           </Routes>
           <FeedbackButton />
           <UpdateNotification />
-        </BabyProvider>
-      </Router>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

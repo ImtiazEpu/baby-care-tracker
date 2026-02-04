@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import PrivacyNotice from './PrivacyNotice';
+import UserMenu from './auth/UserMenu';
 
 const BabyIcon = () => (
   <svg viewBox="0 0 100 100" className="w-9 h-9">
@@ -72,6 +73,7 @@ const Header = ({ showBack = false, backPath = '/', backLabel = 'Back', backIcon
         {rightContent}
         <PrivacyNotice />
         <ThemeToggle />
+        <UserMenu />
       </div>
     </header>
   );

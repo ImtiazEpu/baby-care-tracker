@@ -1,17 +1,18 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useAuth } from './AuthContext';
 import {
   getAllBabies,
-  addBaby as addBabyToStorage,
-  updateBaby as updateBabyInStorage,
-  deleteBaby as deleteBabyFromStorage,
+  addBaby as addBabyToFirestore,
+  updateBaby as updateBabyInFirestore,
+  deleteBaby as deleteBabyFromFirestore,
   toggleVaccine,
-  addMilestone as addMilestoneToStorage,
-  deleteMilestone as deleteMilestoneFromStorage,
-  addGrowthRecord as addGrowthRecordToStorage,
-  deleteGrowthRecord as deleteGrowthRecordFromStorage,
-  addMedicalRecord as addMedicalRecordToStorage,
-  deleteMedicalRecord as deleteMedicalRecordFromStorage
-} from '../utils/storage';
+  addMilestone as addMilestoneToFirestore,
+  deleteMilestone as deleteMilestoneFromFirestore,
+  addGrowthRecord as addGrowthRecordToFirestore,
+  deleteGrowthRecord as deleteGrowthRecordFromFirestore,
+  addMedicalRecord as addMedicalRecordToFirestore,
+  deleteMedicalRecord as deleteMedicalRecordFromFirestore
+} from '../services/babyService';
 
 const BabyContext = createContext();
 
@@ -24,49 +25,90 @@ export const useBaby = () => {
 };
 
 export const BabyProvider = ({ children }) => {
+  const { user } = useAuth();
   const [babies, setBabies] = useState([]);
   const [currentBabyId, setCurrentBabyId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const loadBabies = useCallback(async () => {
+    if (!user?.uid) {
+      setBabies([]);
+      setCurrentBabyId(null);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const allBabies = await getAllBabies(user.uid);
+      setBabies(allBabies);
+
+      if (allBabies.length > 0 && !currentBabyId) {
+        setCurrentBabyId(allBabies[0].id);
+      } else if (allBabies.length === 0) {
+        setCurrentBabyId(null);
+      }
+    } catch (err) {
+      console.error('Error loading babies:', err);
+      setError(err.message || 'Failed to load babies');
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.uid, currentBabyId]);
 
   useEffect(() => {
     loadBabies();
-  }, []);
-
-  const loadBabies = () => {
-    setLoading(true);
-    const allBabies = getAllBabies();
-    setBabies(allBabies);
-
-    if (allBabies.length > 0 && !currentBabyId) {
-      setCurrentBabyId(allBabies[0].id);
-    }
-
-    setLoading(false);
-  };
+  }, [user?.uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentBaby = babies.find(baby => baby.id === currentBabyId);
 
-  const addBaby = (babyData) => {
-    const newBaby = addBabyToStorage(babyData);
-    setBabies([...babies, newBaby]);
-    setCurrentBabyId(newBaby.id);
-    return newBaby;
-  };
+  const addBaby = async (babyData) => {
+    if (!user?.uid) throw new Error('User not authenticated');
 
-  const updateBaby = (id, updates) => {
-    const updated = updateBabyInStorage(id, updates);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === id ? updated : baby));
+    setError(null);
+    try {
+      const newBaby = await addBabyToFirestore(user.uid, babyData);
+      setBabies(prev => [...prev, newBaby]);
+      setCurrentBabyId(newBaby.id);
+      return newBaby;
+    } catch (err) {
+      console.error('Error adding baby:', err);
+      setError(err.message || 'Failed to add baby');
+      throw err;
     }
-    return updated;
   };
 
-  const deleteBaby = (id) => {
-    const remaining = deleteBabyFromStorage(id);
-    setBabies(remaining);
+  const updateBaby = async (id, updates) => {
+    setError(null);
+    try {
+      const updated = await updateBabyInFirestore(id, updates);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === id ? updated : baby));
+      }
+      return updated;
+    } catch (err) {
+      console.error('Error updating baby:', err);
+      setError(err.message || 'Failed to update baby');
+      throw err;
+    }
+  };
 
-    if (currentBabyId === id) {
-      setCurrentBabyId(remaining.length > 0 ? remaining[0].id : null);
+  const deleteBaby = async (id) => {
+    setError(null);
+    try {
+      await deleteBabyFromFirestore(id);
+      const remaining = babies.filter(baby => baby.id !== id);
+      setBabies(remaining);
+
+      if (currentBabyId === id) {
+        setCurrentBabyId(remaining.length > 0 ? remaining[0].id : null);
+      }
+    } catch (err) {
+      console.error('Error deleting baby:', err);
+      setError(err.message || 'Failed to delete baby');
+      throw err;
     }
   };
 
@@ -74,74 +116,126 @@ export const BabyProvider = ({ children }) => {
     setCurrentBabyId(id);
   };
 
-  const toggleVaccineStatus = (vaccineKey) => {
+  const toggleVaccineStatus = async (vaccineKey) => {
     if (!currentBabyId) return;
 
-    const updated = toggleVaccine(currentBabyId, vaccineKey);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === currentBabyId ? updated : baby));
+    setError(null);
+    try {
+      const updated = await toggleVaccine(currentBabyId, vaccineKey);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === currentBabyId ? updated : baby));
+      }
+    } catch (err) {
+      console.error('Error toggling vaccine:', err);
+      setError(err.message || 'Failed to update vaccine status');
+      throw err;
     }
   };
 
-  const addMilestone = (milestone) => {
+  const addMilestone = async (milestone) => {
     if (!currentBabyId) return;
 
-    const updated = addMilestoneToStorage(currentBabyId, milestone);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === currentBabyId ? updated : baby));
+    setError(null);
+    try {
+      const updated = await addMilestoneToFirestore(currentBabyId, milestone);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === currentBabyId ? updated : baby));
+      }
+    } catch (err) {
+      console.error('Error adding milestone:', err);
+      setError(err.message || 'Failed to add milestone');
+      throw err;
     }
   };
 
-  const deleteMilestone = (milestoneId) => {
+  const deleteMilestone = async (milestoneId) => {
     if (!currentBabyId) return;
 
-    const updated = deleteMilestoneFromStorage(currentBabyId, milestoneId);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === currentBabyId ? updated : baby));
+    setError(null);
+    try {
+      const updated = await deleteMilestoneFromFirestore(currentBabyId, milestoneId);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === currentBabyId ? updated : baby));
+      }
+    } catch (err) {
+      console.error('Error deleting milestone:', err);
+      setError(err.message || 'Failed to delete milestone');
+      throw err;
     }
   };
 
-  const addGrowthRecord = (record) => {
+  const addGrowthRecord = async (record) => {
     if (!currentBabyId) return;
 
-    const updated = addGrowthRecordToStorage(currentBabyId, record);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === currentBabyId ? updated : baby));
+    setError(null);
+    try {
+      const updated = await addGrowthRecordToFirestore(currentBabyId, record);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === currentBabyId ? updated : baby));
+      }
+    } catch (err) {
+      console.error('Error adding growth record:', err);
+      setError(err.message || 'Failed to add growth record');
+      throw err;
     }
   };
 
-  const deleteGrowthRecord = (recordId) => {
+  const deleteGrowthRecord = async (recordId) => {
     if (!currentBabyId) return;
 
-    const updated = deleteGrowthRecordFromStorage(currentBabyId, recordId);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === currentBabyId ? updated : baby));
+    setError(null);
+    try {
+      const updated = await deleteGrowthRecordFromFirestore(currentBabyId, recordId);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === currentBabyId ? updated : baby));
+      }
+    } catch (err) {
+      console.error('Error deleting growth record:', err);
+      setError(err.message || 'Failed to delete growth record');
+      throw err;
     }
   };
 
-  const addMedicalRecord = (record) => {
+  const addMedicalRecord = async (record) => {
     if (!currentBabyId) return;
 
-    const updated = addMedicalRecordToStorage(currentBabyId, record);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === currentBabyId ? updated : baby));
+    setError(null);
+    try {
+      const updated = await addMedicalRecordToFirestore(currentBabyId, record);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === currentBabyId ? updated : baby));
+      }
+    } catch (err) {
+      console.error('Error adding medical record:', err);
+      setError(err.message || 'Failed to add medical record');
+      throw err;
     }
   };
 
-  const deleteMedicalRecord = (recordId) => {
+  const deleteMedicalRecord = async (recordId) => {
     if (!currentBabyId) return;
 
-    const updated = deleteMedicalRecordFromStorage(currentBabyId, recordId);
-    if (updated) {
-      setBabies(babies.map(baby => baby.id === currentBabyId ? updated : baby));
+    setError(null);
+    try {
+      const updated = await deleteMedicalRecordFromFirestore(currentBabyId, recordId);
+      if (updated) {
+        setBabies(prev => prev.map(baby => baby.id === currentBabyId ? updated : baby));
+      }
+    } catch (err) {
+      console.error('Error deleting medical record:', err);
+      setError(err.message || 'Failed to delete medical record');
+      throw err;
     }
   };
+
+  const clearError = () => setError(null);
 
   const value = {
     babies,
     currentBaby,
     currentBabyId,
     loading,
+    error,
     addBaby,
     updateBaby,
     deleteBaby,
@@ -153,7 +247,8 @@ export const BabyProvider = ({ children }) => {
     deleteGrowthRecord,
     addMedicalRecord,
     deleteMedicalRecord,
-    refreshBabies: loadBabies
+    refreshBabies: loadBabies,
+    clearError
   };
 
   return <BabyContext.Provider value={value}>{children}</BabyContext.Provider>;

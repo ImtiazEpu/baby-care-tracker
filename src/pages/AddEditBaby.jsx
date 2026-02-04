@@ -31,6 +31,7 @@ const AddEditBaby = () => {
   const [errors, setErrors] = useState({});
   const [pendingFiles, setPendingFiles] = useState([]);
   const [uploadError, setUploadError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isEdit && existingBaby) {
@@ -133,29 +134,36 @@ const AddEditBaby = () => {
 
     if (!validate()) return;
 
-    if (isEdit) {
-      updateBaby(id, formData);
-      // Upload pending files for existing baby
-      for (const file of pendingFiles) {
-        addMedicalRecord({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          data: file.data
-        });
+    setIsSaving(true);
+    try {
+      if (isEdit) {
+        await updateBaby(id, formData);
+        // Upload pending files for existing baby
+        for (const file of pendingFiles) {
+          await addMedicalRecord({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            data: file.data
+          });
+        }
+      } else {
+        await addBaby({ ...formData, medicalRecords: pendingFiles.map(f => ({
+          id: f.id,
+          name: f.name,
+          type: f.type,
+          size: f.size,
+          data: f.data,
+          uploadedAt: new Date().toISOString()
+        }))});
       }
-    } else {
-      const newBaby = addBaby({ ...formData, medicalRecords: pendingFiles.map(f => ({
-        id: f.id,
-        name: f.name,
-        type: f.type,
-        size: f.size,
-        data: f.data,
-        uploadedAt: new Date().toISOString()
-      }))});
+      navigate('/');
+    } catch (err) {
+      console.error('Error saving baby:', err);
+      setErrors({ submit: err.message || 'Failed to save. Please try again.' });
+    } finally {
+      setIsSaving(false);
     }
-
-    navigate('/');
   };
 
   return (
@@ -379,16 +387,23 @@ const AddEditBaby = () => {
               )}
             </div>
 
+            {errors.submit && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
+                {errors.submit}
+              </div>
+            )}
+
             <div className="flex gap-3">
-              <Button type="button" variant="secondary" onClick={() => navigate('/')} fullWidth>
+              <Button type="button" variant="secondary" onClick={() => navigate('/')} fullWidth disabled={isSaving}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 fullWidth
                 icon={isEdit ? PencilSquareIcon : UserPlusIcon}
+                disabled={isSaving}
               >
-                {isEdit ? 'Update Baby' : 'Add Baby'}
+                {isSaving ? 'Saving...' : (isEdit ? 'Update Baby' : 'Add Baby')}
               </Button>
             </div>
           </form>

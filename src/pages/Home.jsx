@@ -7,7 +7,7 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
 import Header from '../components/Header';
-import { ListLoader } from '../components/LoadingCard';
+import { HomeLoader } from '../components/LoadingCard';
 import Footer from '../components/Footer';
 
 const Home = () => {
@@ -34,8 +34,9 @@ const Home = () => {
   if (loading) {
     return (
       <div className="min-h-screen gradient-mesh flex flex-col">
-        <div className="max-w-4xl mx-auto p-4 pt-8 flex-1">
-          <ListLoader rows={3} />
+        <div className="max-w-4xl mx-auto p-4 py-8 flex-1">
+          <Header />
+          <HomeLoader />
         </div>
         <Footer />
       </div>
