@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { UserPlusIcon, PencilSquareIcon, DocumentArrowUpIcon, TrashIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon, PencilSquareIcon, DocumentArrowUpIcon, TrashIcon, DocumentIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
 import Input from '../components/Input';
 import DatePicker from '../components/DatePicker';
@@ -74,22 +74,52 @@ const AddEditBaby = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Storage limits
+  const MAX_FILE_SIZE = 500 * 1024; // 500KB per file
+  const MAX_TOTAL_SIZE = 5 * 1024 * 1024; // 5MB total
+
+  // Calculate total size of all medical records (existing + pending)
+  const getTotalRecordsSize = () => {
+    const existingSize = (existingBaby?.medicalRecords || []).reduce((sum, r) => sum + (r.size || 0), 0);
+    const pendingSize = pendingFiles.reduce((sum, f) => sum + f.size, 0);
+    return existingSize + pendingSize;
+  };
+
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
     setUploadError('');
 
-    const maxSize = 5 * 1024 * 1024; // 5MB limit
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+
+    // Calculate new files total size
+    const newFilesSize = files.reduce((sum, f) => sum + f.size, 0);
+    const currentTotalSize = getTotalRecordsSize();
+    const projectedTotalSize = currentTotalSize + newFilesSize;
 
     for (const file of files) {
       if (!allowedTypes.includes(file.type)) {
         setUploadError('Only PDF, JPG, and PNG files are allowed');
         return;
       }
-      if (file.size > maxSize) {
-        setUploadError('File size must be less than 5MB');
+      // Check individual file size
+      if (file.size > MAX_FILE_SIZE) {
+        setUploadError(
+          `File "${file.name}" is too large (${(file.size / 1024).toFixed(0)}KB). ` +
+          `Maximum size per file is 500KB. Please compress or resize the file.`
+        );
         return;
       }
+    }
+
+    // Check if total size would exceed limit
+    if (projectedTotalSize > MAX_TOTAL_SIZE) {
+      const availableSpace = Math.max(0, MAX_TOTAL_SIZE - currentTotalSize);
+      setUploadError(
+        `Cannot add file(s). Total size would be ${(projectedTotalSize / (1024 * 1024)).toFixed(1)}MB, ` +
+        `but maximum is 5MB. You have ${(availableSpace / 1024).toFixed(0)}KB available. ` +
+        `Please remove existing files or use smaller files.`
+      );
+      return;
     }
 
     // Convert files to base64
@@ -189,7 +219,8 @@ const AddEditBaby = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className={isSaving ? 'opacity-60' : ''}>
+            <fieldset disabled={isSaving}>
             <Input
               label="Baby's Name"
               name="name"
@@ -300,9 +331,28 @@ const AddEditBaby = () => {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 Medical Records (Optional)
               </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                Upload birth certificates, medical reports, prescriptions, etc. (PDF, JPG, PNG - Max 5MB each)
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Upload birth certificates, medical reports, prescriptions, etc. (PDF, JPG, PNG - Max 500KB per file)
               </p>
+              <div className="mb-3">
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-gray-500 dark:text-gray-400">Storage used:</span>
+                  <span className={`font-medium ${getTotalRecordsSize() > 4 * 1024 * 1024 ? 'text-orange-500' : 'text-gray-600 dark:text-gray-300'}`}>
+                    {getTotalRecordsSize() < 1024 * 1024
+                      ? `${(getTotalRecordsSize() / 1024).toFixed(0)}KB`
+                      : `${(getTotalRecordsSize() / (1024 * 1024)).toFixed(1)}MB`
+                    } / 5MB
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                  <div
+                    className={`h-1.5 rounded-full transition-all ${
+                      getTotalRecordsSize() > 4 * 1024 * 1024 ? 'bg-orange-500' : 'bg-indigo-500'
+                    }`}
+                    style={{ width: `${Math.min(100, (getTotalRecordsSize() / MAX_TOTAL_SIZE) * 100)}%` }}
+                  />
+                </div>
+              </div>
 
               <input
                 type="file"
@@ -387,6 +437,8 @@ const AddEditBaby = () => {
               )}
             </div>
 
+            </fieldset>
+
             {errors.submit && (
               <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
                 {errors.submit}
@@ -400,8 +452,9 @@ const AddEditBaby = () => {
               <Button
                 type="submit"
                 fullWidth
-                icon={isEdit ? PencilSquareIcon : UserPlusIcon}
+                icon={isSaving ? ArrowPathIcon : (isEdit ? PencilSquareIcon : UserPlusIcon)}
                 disabled={isSaving}
+                className={isSaving ? '[&>svg]:animate-spin' : ''}
               >
                 {isSaving ? 'Saving...' : (isEdit ? 'Update Baby' : 'Add Baby')}
               </Button>

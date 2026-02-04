@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PlusIcon, TrashIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon, ChartBarIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Button from './Button';
@@ -11,6 +11,8 @@ import Modal from './Modal';
 const GrowthTracker = () => {
   const { currentBaby, addGrowthRecord, deleteGrowthRecord } = useBaby();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [newRecord, setNewRecord] = useState({
     date: new Date().toISOString().split('T')[0],
     weight: '',
@@ -22,24 +24,38 @@ const GrowthTracker = () => {
 
   const growthRecords = currentBaby.growthRecords || [];
 
-  const handleAddRecord = () => {
+  const handleAddRecord = async () => {
     if (!newRecord.weight && !newRecord.height && !newRecord.headCircumference) return;
 
-    addGrowthRecord({
-      date: newRecord.date,
-      weight: parseFloat(newRecord.weight) || null,
-      height: parseFloat(newRecord.height) || null,
-      headCircumference: parseFloat(newRecord.headCircumference) || null
-    });
+    setIsAdding(true);
+    try {
+      await addGrowthRecord({
+        date: newRecord.date,
+        weight: parseFloat(newRecord.weight) || null,
+        height: parseFloat(newRecord.height) || null,
+        headCircumference: parseFloat(newRecord.headCircumference) || null
+      });
 
-    setNewRecord({
-      date: new Date().toISOString().split('T')[0],
-      weight: '',
-      height: '',
-      headCircumference: ''
-    });
+      setNewRecord({
+        date: new Date().toISOString().split('T')[0],
+        weight: '',
+        height: '',
+        headCircumference: ''
+      });
 
-    setIsModalOpen(false);
+      setIsModalOpen(false);
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  const handleDeleteRecord = async (recordId) => {
+    setDeletingId(recordId);
+    try {
+      await deleteGrowthRecord(recordId);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const chartData = growthRecords.map(record => ({
@@ -114,10 +130,15 @@ const GrowthTracker = () => {
                     <td className="px-4 py-3 text-gray-900 dark:text-gray-100">{record.headCircumference || '-'}</td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => deleteGrowthRecord(record.id)}
-                        className="glass-card border border-white/10 p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon"
+                        onClick={() => handleDeleteRecord(record.id)}
+                        disabled={deletingId === record.id}
+                        className={`glass-card border border-white/10 p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon ${deletingId === record.id ? 'opacity-50' : ''}`}
                       >
-                        <TrashIcon className="w-4 h-4" />
+                        {deletingId === record.id ? (
+                          <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <TrashIcon className="w-4 h-4" />
+                        )}
                       </button>
                     </td>
                   </tr>
@@ -167,11 +188,17 @@ const GrowthTracker = () => {
             placeholder="e.g., 35.0"
           />
           <div className="flex gap-3 pt-2">
-            <Button variant="secondary" onClick={() => setIsModalOpen(false)} fullWidth>
+            <Button variant="secondary" onClick={() => setIsModalOpen(false)} fullWidth disabled={isAdding}>
               Cancel
             </Button>
-            <Button onClick={handleAddRecord} icon={PlusIcon} fullWidth>
-              Add Record
+            <Button
+              onClick={handleAddRecord}
+              icon={isAdding ? ArrowPathIcon : PlusIcon}
+              fullWidth
+              disabled={isAdding}
+              className={isAdding ? '[&>svg]:animate-spin' : ''}
+            >
+              {isAdding ? 'Adding...' : 'Add Record'}
             </Button>
           </div>
         </div>

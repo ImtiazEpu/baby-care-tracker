@@ -1,14 +1,14 @@
-import { CheckCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ClockIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { STATUS_COLORS, STATUS_ICONS } from '../config/vaccines';
 import Button from './Button';
 
-const VaccineCard = ({ vaccine, onToggle }) => {
+const VaccineCard = ({ vaccine, onToggle, isLoading = false }) => {
   const { label, dueDate, status, statusMessage, isCompleted, ageLabel, ageDays } = vaccine;
 
   return (
     <div className={`glass-card border border-white/10 border-l-4 p-4 sm:p-5 rounded-r-2xl transition-all hover:scale-[1.01] ${
       isCompleted ? 'border-l-green-500' : 'border-l-indigo-500'
-    }`}>
+    } ${isLoading ? 'opacity-70' : ''}`}>
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
@@ -42,19 +42,23 @@ const VaccineCard = ({ vaccine, onToggle }) => {
             <Button
               size="sm"
               variant="secondary"
-              icon={ClockIcon}
+              icon={isLoading ? ArrowPathIcon : ClockIcon}
               onClick={() => onToggle(vaccine.key)}
+              disabled={isLoading}
+              className={isLoading ? '[&>svg]:animate-spin' : ''}
             >
-              Undo
+              {isLoading ? 'Updating...' : 'Undo'}
             </Button>
           ) : (
             <Button
               size="sm"
               variant="success"
-              icon={CheckCircleIcon}
+              icon={isLoading ? ArrowPathIcon : CheckCircleIcon}
               onClick={() => onToggle(vaccine.key)}
+              disabled={isLoading}
+              className={isLoading ? '[&>svg]:animate-spin' : ''}
             >
-              Mark Done
+              {isLoading ? 'Updating...' : 'Mark Done'}
             </Button>
           )}
         </div>

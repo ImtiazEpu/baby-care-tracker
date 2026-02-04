@@ -8,6 +8,7 @@ import {
   DocumentIcon,
   TrashIcon,
   ArrowDownTrayIcon,
+  ArrowLeftIcon,
   EyeIcon
 } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
@@ -34,6 +35,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { currentBaby, babies, switchBaby, toggleVaccineStatus, deleteMedicalRecord, loading } = useBaby();
   const [activeTab, setActiveTab] = useState('vaccines');
+  const [loadingVaccineKey, setLoadingVaccineKey] = useState(null);
   const tabsContainerRef = useRef(null);
   const tabRefs = useRef({});
 
@@ -126,6 +128,15 @@ const Dashboard = () => {
     const shareUrl = `${window.location.origin}/share?name=${encodeURIComponent(currentBaby.name)}&dob=${currentBaby.dob}&v=${vaccinesData}`;
     navigator.clipboard.writeText(shareUrl);
     alert('Share link copied to clipboard!');
+  };
+
+  const handleVaccineToggle = async (vaccineKey) => {
+    setLoadingVaccineKey(vaccineKey);
+    try {
+      await toggleVaccineStatus(vaccineKey);
+    } finally {
+      setLoadingVaccineKey(null);
+    }
   };
 
   return (
@@ -268,7 +279,8 @@ const Dashboard = () => {
                   <VaccineCard
                     key={vaccine.key}
                     vaccine={vaccine}
-                    onToggle={toggleVaccineStatus}
+                    onToggle={handleVaccineToggle}
+                    isLoading={loadingVaccineKey === vaccine.key}
                   />
                 ))}
               </div>

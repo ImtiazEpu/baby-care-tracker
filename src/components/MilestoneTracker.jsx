@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useBaby } from '../context/BabyContext';
 import { calculateAge } from '../utils/ageCalculator';
 import Button from './Button';
@@ -20,6 +20,8 @@ const AUTO_MILESTONES = [
 const MilestoneTracker = () => {
   const { currentBaby, addMilestone, deleteMilestone } = useBaby();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [newMilestone, setNewMilestone] = useState({
     title: '',
     description: '',
@@ -35,23 +37,37 @@ const MilestoneTracker = () => {
 
   const customMilestones = currentBaby.milestones || [];
 
-  const handleAddMilestone = () => {
+  const handleAddMilestone = async () => {
     if (!newMilestone.title.trim()) return;
 
-    addMilestone({
-      title: newMilestone.title,
-      description: newMilestone.description,
-      date: newMilestone.date,
-      isCustom: true
-    });
+    setIsAdding(true);
+    try {
+      await addMilestone({
+        title: newMilestone.title,
+        description: newMilestone.description,
+        date: newMilestone.date,
+        isCustom: true
+      });
 
-    setNewMilestone({
-      title: '',
-      description: '',
-      date: new Date().toISOString().split('T')[0]
-    });
+      setNewMilestone({
+        title: '',
+        description: '',
+        date: new Date().toISOString().split('T')[0]
+      });
 
-    setIsModalOpen(false);
+      setIsModalOpen(false);
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  const handleDeleteMilestone = async (milestoneId) => {
+    setDeletingId(milestoneId);
+    try {
+      await deleteMilestone(milestoneId);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -111,10 +127,15 @@ const MilestoneTracker = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => deleteMilestone(milestone.id)}
-                  className="glass-card border border-white/10 p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon"
+                  onClick={() => handleDeleteMilestone(milestone.id)}
+                  disabled={deletingId === milestone.id}
+                  className={`glass-card border border-white/10 p-2 rounded-lg hover:scale-110 transition-transform cursor-pointer delete-icon ${deletingId === milestone.id ? 'opacity-50' : ''}`}
                 >
-                  <TrashIcon className="w-5 h-5" />
+                  {deletingId === milestone.id ? (
+                    <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <TrashIcon className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             ))}
@@ -148,11 +169,17 @@ const MilestoneTracker = () => {
           placeholder="Select date"
         />
         <div className="flex gap-3 mt-4">
-          <Button variant="secondary" onClick={() => setIsModalOpen(false)} fullWidth>
+          <Button variant="secondary" onClick={() => setIsModalOpen(false)} fullWidth disabled={isAdding}>
             Cancel
           </Button>
-          <Button onClick={handleAddMilestone} icon={PlusIcon} fullWidth>
-            Add Milestone
+          <Button
+            onClick={handleAddMilestone}
+            icon={isAdding ? ArrowPathIcon : PlusIcon}
+            fullWidth
+            disabled={isAdding}
+            className={isAdding ? '[&>svg]:animate-spin' : ''}
+          >
+            {isAdding ? 'Adding...' : 'Add Milestone'}
           </Button>
         </div>
       </Modal>
