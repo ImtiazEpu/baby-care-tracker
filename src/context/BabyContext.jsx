@@ -230,6 +230,24 @@ export const BabyProvider = ({ children }) => {
 
   const clearError = () => setError(null);
 
+  const deleteAllUserData = async () => {
+    if (!user?.uid) throw new Error('User not authenticated');
+
+    setError(null);
+    try {
+      // Delete all babies (this also deletes their medical records subcollections)
+      for (const baby of babies) {
+        await deleteBabyFromFirestore(baby.id);
+      }
+      setBabies([]);
+      setCurrentBabyId(null);
+    } catch (err) {
+      console.error('Error deleting all user data:', err);
+      setError(err.message || 'Failed to delete all data');
+      throw err;
+    }
+  };
+
   const value = {
     babies,
     currentBaby,
@@ -247,6 +265,7 @@ export const BabyProvider = ({ children }) => {
     deleteGrowthRecord,
     addMedicalRecord,
     deleteMedicalRecord,
+    deleteAllUserData,
     refreshBabies: loadBabies,
     clearError
   };
